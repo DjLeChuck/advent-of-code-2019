@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 require __DIR__.'/../vendor/autoload.php';
 
-$input = file_get_contents(__DIR__.'/input.txt');
+$input = trim(file_get_contents(__DIR__.'/input.txt'));
 
 $assertions = [
     'one' => [
