@@ -15,33 +15,48 @@ $assertions = [
 ];
 
 foreach ($assertions as $list => $expectation) {
-    $result = implode(',', buildIntcode($list, true));
+    $result = implode(',', buildIntcode($list));
 
     if ($result !== $expectation) {
         dump(sprintf('Error for the list %s in assertion one. Expect %s but got %s.', $list, $expectation, $result));
     }
 }
 
-$newIntcode = buildIntcode($input, false);
+$newIntcode = buildIntcode($input, 12, 2);
 
 dump('Value at position 0: '.$newIntcode[0]);
 
+$partTwoResult = 19690720;
+
+for ($noun = 0; $noun <= 99; $noun++) {
+    for ($verb = 0; $verb <= 99; $verb++) {
+        $newIntcode = buildIntcode($input, $noun, $verb);
+
+        if ($partTwoResult === $newIntcode[0]) {
+            dump('Result found. Answer: '.(100 * $noun + $verb));
+
+            break 2;
+        }
+    }
+}
+
 /**
- * @param string $list
- * @param bool   $isTest
+ * @param string   $list
+ * @param int|null $noun
+ * @param int|null $verb
  *
  * @return array
  */
-function buildIntcode(string $list, bool $isTest): array
+function buildIntcode(string $list, ?int $noun = null, ?int $verb = null): array
 {
     $i       = 0;
     $numbers = array_map(static function ($x) {
         return (int) $x;
     }, explode(',', $list));
 
-    if (!$isTest) {
-        $numbers[1] = 12;
-        $numbers[2] = 2;
+    if (null !== $noun && null !== $verb) {
+        $numbers[1] = $noun;
+        $numbers[2] = $verb;
     }
 
     do {
