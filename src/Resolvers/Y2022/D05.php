@@ -10,30 +10,7 @@ class D05 implements ResolverInterface
 {
     public function resolve(array $input): void
     {
-        /*
-    [M]             [Z]     [V]
-    [Z]     [P]     [L]     [Z] [J]
-[S] [D]     [W]     [W]     [H] [Q]
-[P] [V] [N] [D]     [P]     [C] [V]
-[H] [B] [J] [V] [B] [M]     [N] [P]
-[V] [F] [L] [Z] [C] [S] [P] [S] [G]
-[F] [J] [M] [G] [R] [R] [H] [R] [L]
-[G] [G] [G] [N] [V] [V] [T] [Q] [F]
- 1   2   3   4   5   6   7   8   9
-         */
-
-        $stacks = [
-            1 => ['G', 'F', 'V', 'H', 'P', 'S'],
-            2 => ['G', 'J', 'F', 'B', 'V', 'D', 'Z', 'M'],
-            3 => ['G', 'M', 'L', 'J', 'N'],
-            4 => ['N', 'G', 'Z', 'V', 'D', 'W', 'P'],
-            5 => ['V', 'R', 'C', 'B'],
-            6 => ['V', 'R', 'S', 'M', 'P', 'W', 'L', 'Z'],
-            7 => ['T', 'H', 'P'],
-            8 => ['Q', 'R', 'S', 'N', 'C', 'H', 'Z', 'V'],
-            9 => ['F', 'L', 'G', 'P', 'V', 'Q', 'J'],
-        ];
-        $moves = array_slice($input, 9);
+        [$stacks, $moves] = $this->parseInput($input);
         $firstPart = $stacks;
         $secondPart = $stacks;
 
@@ -53,6 +30,8 @@ class D05 implements ResolverInterface
             }
 
             [, $numberToMove, $from, $to] = $matches;
+            --$from;
+            --$to;
 
             // CrateMover 9000
             for ($x = 0; $x < $numberToMove; ++$x) {
@@ -65,5 +44,34 @@ class D05 implements ResolverInterface
 
         dump('First answer: '.implode('', array_map(static fn($stack) => array_pop($stack), $firstPart)));
         dump('Second answer: '.implode('', array_map(static fn($stack) => array_pop($stack), $secondPart)));
+    }
+
+    private function parseInput(array $input): array
+    {
+        $stacks = [];
+        $line = 0;
+
+        foreach ($input as $line => $row) {
+            // Empty line, no more crate.
+            if ('' === $row) {
+                break;
+            }
+
+            foreach (str_split($row) as $i => $char) {
+                if ('A' <= $char && 'Z' >= $char) {
+                    if (!isset($stacks[$i])) {
+                        $stacks[$i] = [];
+                    }
+
+                    $stacks[$i][] = $char;
+                }
+            }
+        }
+
+        ksort($stacks);
+
+        array_walk($stacks, static fn(array &$row) => $row = array_reverse($row));
+
+        return [array_values($stacks), array_filter(array_slice($input, $line))];
     }
 }
