@@ -66,7 +66,21 @@ class ResolveCommand extends Command
         $resolver = $this->getResolver($year, $day);
         $inputGrabber = new InputGrabber();
 
-        $resolver->resolve($inputGrabber->getInput($year, $day));
+        $solution = $resolver->resolve($inputGrabber->getInput($year, $day));
+
+        $io->title(sprintf('<info>🎄 Solution au problème du jour %u de l\'année %u 🎄</>', $day, $year));
+
+        $io->table(
+            ['Première partie', 'Seconde partie'],
+            [
+                [
+                    $solution->getFirstPart() ?? 'Pas encore résolue !',
+                    $solution->getSecondPart() ?? 'Pas encore résolue !'
+                ],
+            ]
+        );
+
+        $io->writeln('<comment>🎅🎁 Joyeux Noël ! 🎁🎅</>');
 
         return self::SUCCESS;
     }
