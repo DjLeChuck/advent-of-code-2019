@@ -7,17 +7,17 @@ namespace App\DTO;
 class Solution
 {
     public function __construct(
-        private readonly ?string $firstPart = null,
-        private readonly ?string $secondPart = null
+        private readonly string|int|null $firstPart = null,
+        private readonly string|int|null $secondPart = null
     ) {
     }
 
-    public function getFirstPart(): ?string
+    public function getFirstPart(): string|int|null
     {
         return $this->firstPart;
     }
 
-    public function getSecondPart(): ?string
+    public function getSecondPart(): string|int|null
     {
         return $this->secondPart;
     }
