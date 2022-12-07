@@ -9,160 +9,106 @@ use App\Resolvers\ResolverInterface;
 
 class D07 implements ResolverInterface
 {
+    private const MAX_ALLOWED_SIZE = 100000;
+    private const DISK_SPACE = 70000000;
+    private const UPDATE_SPACE = 30000000;
+
     public function resolve(array $input): Solution
     {
         $tree = [];
-        $position = '';
+        $list = [];
+        $sizes = [];
 
         foreach ($input as $row) {
-            if (str_starts_with($row, '$')) {
-                if ('$ ls' === $row) {
-                    $buffer = [];
-                } else {
-                    if (!empty($buffer)) {
-                        $this->processBuffer($tree, $buffer, $position);
-                        $buffer = [];
-                    }
+            if (empty($row)) {
+                continue;
+            }
 
-                    $folder = str_replace('$ cd ', '', $row);
-
-                    if ('..' === $folder) {
-                        $parts = explode('/', $position);
-                        array_pop($parts);
-                        $position = implode('/', $parts);
-
-                        if (empty($position)) {
-                            $position = '/';
-                        }
-                    } elseif (empty($position) || str_ends_with('/', $position)) {
-                        $position .= $folder;
-                    } else {
-                        $position .= '/'.$folder;
-                    }
-
-                    // dump($position);
+            // Not a command, so it's a listed item
+            if (!str_starts_with($row, '$')) {
+                if (!str_starts_with($row, 'dir')) {
+                    $list[] = $row;
                 }
+
+                continue;
+            }
+
+            // Before executing command, process current list buffer
+            if (!empty($list)) {
+                $this->processList($sizes, $tree, $list);
+
+                $list = [];
+            }
+
+            // ls command, start a new list buffer
+            if (str_ends_with($row, 'ls')) {
+                $list = [];
             } else {
-                // listing files from previous command
-                $buffer[] = $row;
+                $dir = str_replace('$ cd ', '', $row);
+
+                if ('/' === $dir) {
+                    $tree = ['/'];
+                } elseif ('..' === $dir) {
+                    array_pop($tree);
+                } else {
+                    $tree[] = $dir;
+                }
             }
         }
 
-        if (!empty($buffer)) {
-            $this->processBuffer($tree, $buffer, $position);
+        // Last list processing
+        if (!empty($list)) {
+            $this->processList($sizes, $tree, $list);
         }
 
-        foreach ($tree as $dir => $size) {
-            $subDirs = array_filter(explode('/', $dir));
-            if (2 > \count($subDirs)) {
-                continue;
-            }
+        foreach ($sizes as $path => $size) {
+            $parts = explode('.', $path);
+            array_pop($parts); // Remove the current directory
 
-            // Remove last, which is current looping dir
-            array_pop($subDirs);
+            while (!empty($parts)) {
+                $sizes[$this->preparePath($sizes, $parts)] += $size;
 
-            foreach ($subDirs as $item) {
-                $tree['/'.$item] += $size;
+                array_pop($parts);
             }
         }
 
-        $heavyDirectories = [];
+        $sumSizes = 0;
+        $unusedSpace = self::DISK_SPACE - $sizes['/'];
+        $neededSpace = self::UPDATE_SPACE - $unusedSpace;
+        $deletable = [];
 
-        foreach ($tree as $dir => $size) {
-            if (100000 <= $size) {
-                $heavyDirectories[] = $dir;
+        foreach ($sizes as $dir => $size) {
+            if (self::MAX_ALLOWED_SIZE >= $size) {
+                $sumSizes += $size;
+            }
+
+            if ($size >= $neededSpace) {
+                $deletable[$dir] = $size;
             }
         }
 
-        dump($tree, $heavyDirectories);
+        asort($deletable);
 
-        // $tree = [];
-        // $listing = false;
-        // $buffer = [];
-        // $position = '';
-
-        // foreach ($input as $row) {
-        //     if (str_starts_with($row, '$ cd')) {
-        //         if (!empty($buffer)) {
-        //             dump($position, $this->processList($buffer));
-        //         }
-        //
-        //         $listing = false;
-        //         $folder = str_replace('$ cd ', '', $row);
-        //
-        //         if ('..' === $folder) {
-        //             $parts = explode('/', $position);
-        //             array_pop($parts);
-        //             $position = implode('/', $parts);
-        //
-        //             if (empty($position)) {
-        //                 $position = '/';
-        //             }
-        //         } elseif (empty($position) || str_ends_with('/', $position)) {
-        //             $position .= $folder;
-        //         } else {
-        //             $position .= '/'.$folder;
-        //         }
-        //     } elseif (str_starts_with($row, '$ ls')) {
-        //         if (!empty($buffer)) {
-        //             dump($position, $this->processList($buffer));
-        //         }
-        //
-        //         $listing = true;
-        //         $buffer = [];
-        //     } else {
-        //         if (!$listing) {
-        //             throw new \LogicException(sprintf('Ligne "%s" non traitable.', $row));
-        //         }
-        //
-        //         $buffer[] = $row;
-        //     }
-        // }
-
-        return new Solution();
+        return new Solution($sumSizes, array_shift($deletable));
     }
 
-    private function processBuffer(array &$tree, array $buffer, string $position): void
+    private function preparePath(array &$sizes, array $tree): string
     {
-        $size = 0;
-
-        foreach ($buffer as $row) {
-            if (str_starts_with($row, 'dir ')) {
-                continue;
-            }
-
-            [$fileSize,] = explode(' ', $row);
-            $size += (int) $fileSize;
+        $path = implode('.', $tree);
+        if (!isset($sizes[$path])) {
+            $sizes[$path] = 0;
         }
 
-        $tree[$position] = $size;
+        return $path;
     }
 
-    private function processList(array $buffer): int
+    private function processList(array &$sizes, array $tree, array $list): void
     {
-        $size = 0;
+        $path = $this->preparePath($sizes, $tree);
 
-        foreach ($buffer as $row) {
-            if (str_starts_with($row, 'dir ')) {
-                continue;
-            }
-
-            [$fileSize,] = explode(' ', $row);
-            $size += (int) $fileSize;
-        }
-
-        return $size;
-    }
-
-    private function move(array &$tree, string $command): void
-    {
-        $folder = str_replace('$ cd ', '', $command);
-
-        if ('..' === $folder) {
-        } else {
-            if (!isset($tree[$folder])) {
-                $tree[$folder] = ['directories' => [], 'files' => []];
-            }
+        foreach ($list as $item) {
+            [$size,] = explode(' ', $item);
+            $sizes[$path] += (int) $size;
         }
     }
 }
