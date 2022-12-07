@@ -75,7 +75,7 @@ class ResolveCommand extends Command
             [
                 [
                     $solution->getFirstPart() ?? 'Pas encore résolue !',
-                    $solution->getSecondPart() ?? 'Pas encore résolue !'
+                    $solution->getSecondPart() ?? 'Pas encore résolue !',
                 ],
             ]
         );
@@ -87,7 +87,12 @@ class ResolveCommand extends Command
 
     private function getResolver(int $year, int $day): ResolverInterface
     {
-        $class = sprintf('\App\Resolvers\Y%u\D0%s', $year, $day);
+        $class = sprintf(
+            '\App\Resolvers\Y%u\D%s',
+            $year,
+            str_pad((string) $day, 2, '0', STR_PAD_LEFT)
+        );
+
         if (!class_exists($class)) {
             throw new \InvalidArgumentException(sprintf('The resolver %s does not exists.', $class));
         }
