@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Resolvers\Y2022;
 
+use App\DTO\Solution;
 use App\Resolvers\ResolverInterface;
 
 class D05 implements ResolverInterface
 {
-    public function resolve(array $input): void
+    public function resolve(array $input): Solution
     {
         [$stacks, $moves] = $this->parseInput($input);
         $firstPart = $stacks;
@@ -24,9 +25,7 @@ class D05 implements ResolverInterface
             // move z from x to y
             preg_match('`^move (\d+) from (\d+) to (\d+)$`', $move, $matches);
             if (4 !== \count($matches)) {
-                dump('Unparseable move: '.$move);
-
-                continue;
+                throw new \InvalidArgumentException('Unparseable move: '.$move);
             }
 
             [, $numberToMove, $from, $to] = $matches;
@@ -42,8 +41,12 @@ class D05 implements ResolverInterface
             array_push($secondPart[$to], ...array_splice($secondPart[$from], -$numberToMove));
         }
 
-        dump('First answer: '.implode('', array_map(static fn($stack) => array_pop($stack), $firstPart)));
-        dump('Second answer: '.implode('', array_map(static fn($stack) => array_pop($stack), $secondPart)));
+        $popStack = static fn($stack) => array_pop($stack);
+
+        return new Solution(
+            implode('', array_map($popStack, $firstPart)),
+            implode('', array_map($popStack, $secondPart))
+        );
     }
 
     private function parseInput(array $input): array
