@@ -11,6 +11,7 @@ class D06 implements ResolverInterface
 {
     public function resolve(array $input): Solution
     {
+        // @todo Not working when running through this resolver, but if the exact same code is launched in a simple PHP script, the result is OK... /shrug
         $arr = array_map(static fn($item) => (int) $item, explode("\t", current($input)));
         $passed = [];
         $alreadySeen = false;
