@@ -20,7 +20,9 @@ if (!class_exists(Dotenv::class)) {
 // load all the .env files
 (new Dotenv())->loadEnv(__DIR__.'/.env');
 $application = new Application();
+$command = new ResolveCommand();
 
-$application->add(new ResolveCommand());
+$application->add($command);
+$application->setDefaultCommand($command->getName(), true);
 
 $application->run();
