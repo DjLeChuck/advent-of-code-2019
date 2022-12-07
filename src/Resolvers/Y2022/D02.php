@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Resolvers\Y2022;
 
+use App\DTO\Solution;
 use App\Resolvers\ResolverInterface;
 
 class D02 implements ResolverInterface
@@ -12,7 +13,7 @@ class D02 implements ResolverInterface
     private const DRAW = 3;
     private const WIN = 6;
 
-    public function resolve(array $input): void
+    public function resolve(array $input): Solution
     {
         $choiceScores = [
             'X' => 1,
@@ -82,7 +83,6 @@ class D02 implements ResolverInterface
             $secondScore += $choiceScores[$me];
         }
 
-        dump('First score: '.$firstScore);
-        dump('Second score: '.$secondScore);
+        return new Solution($firstScore, $secondScore);
     }
 }

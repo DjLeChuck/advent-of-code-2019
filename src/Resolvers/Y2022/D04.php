@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Resolvers\Y2022;
 
+use App\DTO\Solution;
 use App\Resolvers\ResolverInterface;
 
 class D04 implements ResolverInterface
 {
-    public function resolve(array $input): void
+    public function resolve(array $input): Solution
     {
         $firstNbRanges = 0;
         $secondNbRanges = 0;
@@ -34,7 +35,6 @@ class D04 implements ResolverInterface
             }
         }
 
-        dump('First answer: '.$firstNbRanges);
-        dump('Second answer: '.$secondNbRanges);
+        return new Solution($firstNbRanges, $secondNbRanges);
     }
 }

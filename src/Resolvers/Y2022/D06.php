@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Resolvers\Y2022;
 
+use App\DTO\Solution;
 use App\Resolvers\ResolverInterface;
 
 class D06 implements ResolverInterface
 {
-    public function resolve(array $input): void
+    public function resolve(array $input): Solution
     {
         $signal = str_split(current($input));
 
-        dump('First answer: '.$this->analyzeSignal($signal, 4));
-        dump('Second answer: '.$this->analyzeSignal($signal, 14));
+        return new Solution($this->analyzeSignal($signal, 4), $this->analyzeSignal($signal, 14));
     }
 
     private function analyzeSignal(array $signal, int $bufferSize): int

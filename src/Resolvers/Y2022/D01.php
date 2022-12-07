@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Resolvers\Y2022;
 
+use App\DTO\Solution;
 use App\Resolvers\ResolverInterface;
 
 class D01 implements ResolverInterface
 {
-    public function resolve(array $input): void
+    public function resolve(array $input): Solution
     {
         $calories = [];
         $index = 0;
@@ -28,10 +29,10 @@ class D01 implements ResolverInterface
 
         sort($calories);
 
-        dump('Max calories: '.end($calories));
+        $firstAnswer = end($calories);
 
         $topThree = array_slice($calories, -3);
 
-        dump('Top three calories: '.array_reduce($topThree, static fn($x, $y) => $y += $x, 0));
+        return new Solution($firstAnswer, array_reduce($topThree, static fn($x, $y) => $y + $x, 0));
     }
 }

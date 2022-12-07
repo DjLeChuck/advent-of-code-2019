@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace App\Resolvers\Y2022;
 
+use App\DTO\Solution;
 use App\Resolvers\ResolverInterface;
 
 class D03 implements ResolverInterface
 {
-    public function resolve(array $input): void
+    public function resolve(array $input): Solution
     {
         // First part
-        $sumPriorities = 0;
+        $firstSumPriorities = 0;
 
         foreach ($input as $row) {
             if (empty($row)) {
@@ -23,13 +24,11 @@ class D03 implements ResolverInterface
             $firstCompartment = array_slice($chars, 0, $count / 2);
             $secondCompartment = array_slice($chars, $count / 2);
 
-            $this->sumPriorities($sumPriorities, $firstCompartment, $secondCompartment);
+            $this->sumPriorities($firstSumPriorities, $firstCompartment, $secondCompartment);
         }
 
-        dump('First part - Sum priorities: '.$sumPriorities);
-
         // Second part
-        $sumPriorities = 0;
+        $secondSumPriorities = 0;
 
         while (!empty($input)) {
             // Group backs by three
@@ -43,10 +42,10 @@ class D03 implements ResolverInterface
                 $row = str_split($row);
             });
 
-            $this->sumPriorities($sumPriorities, ...$group);
+            $this->sumPriorities($secondSumPriorities, ...$group);
         }
 
-        dump('Second part - Sum priorities: '.$sumPriorities);
+        return new Solution($firstSumPriorities, $secondSumPriorities);
     }
 
     private function sumPriorities(int &$priorities, ...$array): void
