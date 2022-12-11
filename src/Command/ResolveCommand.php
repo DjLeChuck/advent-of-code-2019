@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\AdventOfCode\InputGrabber;
+use App\Resolvers\IOAwareInterface;
 use App\Resolvers\ResolverInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -66,9 +67,13 @@ class ResolveCommand extends Command
         $resolver = $this->getResolver($year, $day);
         $inputGrabber = new InputGrabber();
 
-        $solution = $resolver->resolve($inputGrabber->getInput($year, $day));
-
         $io->title(sprintf('<info>🎄 Solution au problème du jour %u de l\'année %u 🎄</>', $day, $year));
+
+        if ($resolver instanceof IOAwareInterface) {
+            $resolver->setIo($io);
+        }
+
+        $solution = $resolver->resolve($inputGrabber->getInput($year, $day));
 
         $io->table(
             ['Première partie', 'Seconde partie'],
