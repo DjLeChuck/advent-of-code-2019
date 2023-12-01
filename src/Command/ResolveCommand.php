@@ -22,7 +22,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class ResolveCommand extends Command
 {
     private const FIRST_YEAR = 2015;
-    private const LAST_YEAR = 2022;
+    private const LAST_YEAR = 2023;
     private const FIRST_DAY = 1;
     private const LAST_DAY = 25;
 
