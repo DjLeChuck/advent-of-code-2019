@@ -6,7 +6,7 @@ namespace App\AdventOfCode;
 
 use Symfony\Component\HttpClient\HttpClient;
 
-class InputGrabber
+final readonly class InputGrabber
 {
     public function __construct(
         private bool $useExampleInput,
