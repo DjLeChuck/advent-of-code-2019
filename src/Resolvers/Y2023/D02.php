@@ -18,38 +18,52 @@ class D02 implements ResolverInterface
     public function resolve(array $input): Solution
     {
         $partOne = 0;
+        $partTwo = 0;
 
-        foreach ($input as $game) {
-            if (empty($game)) {
+        foreach ($input as $row) {
+            if (empty($row)) {
                 continue;
             }
 
             $matches = [];
-            preg_match('/Game (\d+): (.*)/', $game, $matches);
+            preg_match('/Game (\d+): (.*)/', $row, $matches);
             $game = $matches[1];
             $rounds = explode(';', $matches[2]);
             $nbValid = 0;
+
+            $maxCubes = [
+                'red'   => 0,
+                'green' => 0,
+                'blue'  => 0,
+            ];
 
             foreach ($rounds as $cubes) {
                 $matches = [];
                 preg_match_all('/(\d+) (blue|red|green)/', $cubes, $matches);
 
                 $result = array_combine($matches[2], array_map('\intval', $matches[1]));
+                $validColors = 0;
 
                 foreach ($result as $color => $value) {
-                    if ($value > self::NUMBER_ALLOWED_CUBES[$color]) {
-                        break 2;
+                    $maxCubes[$color] = max($maxCubes[$color], $value);
+
+                    if ($value <= self::NUMBER_ALLOWED_CUBES[$color]) {
+                        ++$validColors;
                     }
                 }
 
-                ++$nbValid;
+                if (\count($result) === $validColors) {
+                    ++$nbValid;
+                }
             }
 
             if (\count($rounds) === $nbValid) {
                 $partOne += $game;
             }
+
+            $partTwo += array_reduce($maxCubes, static fn(int $carry, int $item) => $carry * $item, 1);
         }
 
-        return new Solution($partOne);
+        return new Solution($partOne, $partTwo);
     }
 }
