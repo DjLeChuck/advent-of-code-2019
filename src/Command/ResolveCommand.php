@@ -43,6 +43,7 @@ class ResolveCommand extends Command
                 'The concerned day.',
                 date('d')
             )
+            ->addOption('example', 'e', InputOption::VALUE_NONE, 'Use the example input')
         ;
     }
 
@@ -65,7 +66,10 @@ class ResolveCommand extends Command
         }
 
         $resolver = $this->getResolver($year, $day);
-        $inputGrabber = new InputGrabber();
+        $inputGrabber = new InputGrabber(
+            $input->getOption('example'),
+            __DIR__ . '/../../var/examples'
+        );
 
         $io->title(sprintf('<info>🎄 Solution au problème du jour %u de l\'année %u 🎄</>', $day, $year));
 
