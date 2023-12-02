@@ -25,48 +25,30 @@ class D01 implements ResolverInterface
     {
         $totalOne = 0;
         $totalTwo = 0;
+        $secondPartPattern = '/(?=(\d|' . implode('|', array_keys(self::WORDS)) . '))/';
 
         foreach ($input as $row) {
             if (empty($row)) {
                 continue;
             }
 
-            $i = 0;
-            $secondRow = $row;
+            $numbers = [];
+            preg_match_all('/(\d)/', $row, $numbers);
 
-            while ($i <= mb_strlen($secondRow)) {
-                foreach (self::WORDS as $word => $number) {
-                    $wordLen = mb_strlen($word);
+            $totalOne += (int) (current($numbers[0]) . end($numbers[0]));
 
-                    if ($word === mb_substr($secondRow, $i, $wordLen)) {
-                        $secondRow = substr_replace($secondRow, $number, $i, $wordLen);
-                        $i += mb_strlen($number) - 1;
-                        break;
-                    }
-                }
-                $i++;
+            $numbers = [];
+            preg_match_all($secondPartPattern, $row, $numbers);
+
+            // Transform matched words into numbers
+            foreach ($numbers[1] as &$number) {
+                $number = self::WORDS[$number] ?? $number;
             }
+            unset($number);
 
-            $strSplit = str_split($row);
-            $strSecondSplit = str_split($secondRow);
-
-            $totalOne += (int) ($this->getFirstNumber($strSplit) . $this->getFirstNumber(array_reverse($strSplit)));
-            $totalTwo += (int) (
-                $this->getFirstNumber($strSecondSplit) . $this->getFirstNumber(array_reverse($strSecondSplit))
-            );
+            $totalTwo += (int) (current($numbers[1]) . end($numbers[1]));
         }
 
         return new Solution($totalOne, $totalTwo);
-    }
-
-    private function getFirstNumber(array $chars): string
-    {
-        foreach ($chars as $char) {
-            if (is_numeric($char)) {
-                return $char;
-            }
-        }
-
-        throw new \InvalidArgumentException(sprintf('No number in the chars list: %s', implode('', $chars)));
     }
 }
