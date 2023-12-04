@@ -9,11 +9,13 @@ use App\Resolvers\ResolverInterface;
 
 class D04 implements ResolverInterface
 {
+
     public function resolve(array $input): Solution
     {
         $totalOne = 0;
+        $nbCards = array_fill(0, \count(array_filter($input)), 1);
 
-        foreach ($input as $cardData) {
+        foreach ($input as $i => $cardData) {
             if (empty($cardData)) {
                 continue;
             }
@@ -29,6 +31,7 @@ class D04 implements ResolverInterface
                 continue;
             }
 
+            // Part one
             $result = 1;
 
             for ($x = 0; $x < $nbMatch - 1; $x++) {
@@ -36,8 +39,15 @@ class D04 implements ResolverInterface
             }
 
             $totalOne += $result;
+
+            // Part two
+            for ($y = 1; $y <= $nbCards[$i]; $y++) {
+                for ($x = 1; $x <= $nbMatch; $x++) {
+                    ++$nbCards[$i + $x];
+                }
+            }
         }
 
-        return new Solution($totalOne);
+        return new Solution($totalOne, array_sum($nbCards));
     }
 }
