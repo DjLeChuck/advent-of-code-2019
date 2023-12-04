@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Resolvers\Y2023;
 
 use App\DTO\Solution;
+use App\DTO\Y2023D03\Gear;
 use App\DTO\Y2023D03\Number;
 use App\Resolvers\ResolverInterface;
 
@@ -23,11 +24,13 @@ class D03 implements ResolverInterface
     ];
 
     private array $schema = [];
+    /** @var array<int, Number> */
+    private array $numbers = [];
+    /** @var array<int, Gear> */
+    private array $gears = [];
 
     public function resolve(array $input): Solution
     {
-        $numbers = [];
-
         // Build schema and grab numbers
         foreach ($input as $y => $row) {
             if (empty($row)) {
@@ -36,26 +39,39 @@ class D03 implements ResolverInterface
 
             foreach (str_split($row) as $x => $cell) {
                 $this->schema[$y][$x] = $cell;
+
+                if ('*' === $cell) {
+                    $this->gears[] = new Gear($x, $y);
+                }
             }
 
             $matches = [];
             preg_match_all('(\d+)', $row, $matches, PREG_OFFSET_CAPTURE);
 
             foreach ($matches[0] as $data) {
-                $numbers[] = new Number((int) $data[0], $data[1], $y);
+                $this->numbers[] = new Number((int) $data[0], $data[1], $y);
             }
         }
 
         $totalOne = 0;
+        $totalTwo = 0;
 
         // Analyze numbers
-        foreach ($numbers as $number) {
+        foreach ($this->numbers as $number) {
             if ($this->numberIsValid($number)) {
                 $totalOne += $number->getValue();
             }
         }
 
-        return new Solution($totalOne);
+        foreach ($this->gears as $gear) {
+            $surroundingNumbers = $this->getSurroundingNumbers($gear);
+
+            if (2 === \count($surroundingNumbers)) {
+                $totalTwo += (current($surroundingNumbers))->getValue() * (end($surroundingNumbers))->getValue();
+            }
+        }
+
+        return new Solution($totalOne, $totalTwo);
     }
 
     private function numberIsValid(Number $number): bool
@@ -80,5 +96,29 @@ class D03 implements ResolverInterface
         }
 
         return false;
+    }
+
+    /**
+     * @return array<int, Number>
+     */
+    private function getSurroundingNumbers(Gear $gear): array
+    {
+        $numbers = [];
+
+        foreach ($this->numbers as $number) {
+            foreach (self::CELLS_OFFSETS as $offset) {
+                if ($gear->getY() + $offset[0] !== $number->getY()) {
+                    continue;
+                }
+
+                if (!\in_array($gear->getX() + $offset[1], $number->getXRange(), true)) {
+                    continue;
+                }
+
+                $numbers[] = $number;
+            }
+        }
+
+        return array_unique($numbers);
     }
 }

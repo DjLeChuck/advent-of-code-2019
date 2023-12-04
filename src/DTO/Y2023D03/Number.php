@@ -4,13 +4,20 @@ declare(strict_types=1);
 
 namespace App\DTO\Y2023D03;
 
-final readonly class Number
+final class Number
 {
+    private array $xRange;
+
     public function __construct(
-        private int $value,
-        private int $x,
-        private int $y,
+        private readonly int $value,
+        private readonly int $x,
+        private readonly int $y,
     ) {
+        $this->xRange = [];
+
+        for ($i = $x; $i < $this->x + \strlen((string) $this->value); $i++) {
+            $this->xRange[] = $i;
+        }
     }
 
     public function getValue(): int
@@ -26,5 +33,15 @@ final readonly class Number
     public function getY(): int
     {
         return $this->y;
+    }
+
+    public function getXRange(): array
+    {
+        return $this->xRange;
+    }
+
+    public function __toString(): string
+    {
+        return sprintf('%u:%u', $this->x, $this->y);
     }
 }
