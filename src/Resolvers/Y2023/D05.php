@@ -57,7 +57,7 @@ class D05 implements ResolverInterface
         }
 
         $maps = array_keys($this->almanach['maps']);
-        $minLocation = INF;
+        $partOne = INF;
 
         foreach ($this->almanach['seeds'] as $seed) {
             $value = $seed;
@@ -66,10 +66,25 @@ class D05 implements ResolverInterface
                 $value = $this->transformXToY($value, $map);
             }
 
-            $minLocation = min($minLocation, $value);
+            $partOne = min($partOne, $value);
         }
 
-        return new Solution($minLocation);
+        $partTwo = INF;
+        $nbSeeds = \count($this->almanach['seeds']);
+
+        for ($x = 0; $x < $nbSeeds; $x += 2) {
+            for ($i = 0; $i < $this->almanach['seeds'][$x + 1]; $i++) {
+                $value = $this->almanach['seeds'][$x] + $i;
+
+                foreach ($maps as $map) {
+                    $value = $this->transformXToY($value, $map);
+                }
+
+                $partTwo = min($partTwo, $value);
+            }
+        }
+
+        return new Solution($partOne, $partTwo);
     }
 
     private function transformXToY(int $value, string $map): int
