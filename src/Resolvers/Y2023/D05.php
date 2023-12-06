@@ -69,22 +69,56 @@ class D05 implements ResolverInterface
             $partOne = min($partOne, $value);
         }
 
-        $partTwo = INF;
-        $nbSeeds = \count($this->almanach['seeds']);
+        $partTwo = [];
 
-        for ($x = 0; $x < $nbSeeds; $x += 2) {
-            for ($i = 0; $i < $this->almanach['seeds'][$x + 1]; $i++) {
-                $value = $this->almanach['seeds'][$x] + $i;
+        foreach (array_chunk($this->almanach['seeds'], 2) as [$start, $length]) {
+            $range = [[$start, $start + $length]];
 
-                foreach ($maps as $map) {
-                    $value = $this->transformXToY($value, $map);
-                }
-
-                $partTwo = min($partTwo, $value);
+            foreach ($maps as $map) {
+                $range = $this->applyRange($range, $this->almanach['maps'][$map]);
             }
+
+            $partTwo[] = min($range)[0];
         }
 
-        return new Solution($partOne, $partTwo);
+        return new Solution($partOne, min($partTwo));
+    }
+
+    private function applyRange($range, $steps): array
+    {
+        $interRange = [];
+
+        foreach ($steps as $tuple) {
+            $destination = $tuple['destination'];
+            $source = $tuple['source'];
+            $sourceEnd = $source + $tuple['length'];
+            $otherRanges = [];
+
+            while (!empty($range)) {
+                $current = array_pop($range);
+                [$st, $ed] = $current;
+
+                $before = [$st, min($ed, $source)];
+                $inter = [max($st, $source), min($sourceEnd, $ed)];
+                $after = [max($sourceEnd, $st), $ed];
+
+                if ($before[1] > $before[0]) {
+                    $otherRanges[] = $before;
+                }
+
+                if ($inter[1] > $inter[0]) {
+                    $interRange[] = [$inter[0] - $source + $destination, $inter[1] - $source + $destination];
+                }
+
+                if ($after[1] > $after[0]) {
+                    $otherRanges[] = $after;
+                }
+            }
+
+            $range = $otherRanges;
+        }
+
+        return array_merge($interRange, $range);
     }
 
     private function transformXToY(int $value, string $map): int
