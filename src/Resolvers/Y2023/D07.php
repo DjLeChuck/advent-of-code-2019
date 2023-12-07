@@ -11,9 +11,12 @@ use App\Resolvers\ResolverInterface;
 class D07 implements ResolverInterface
 {
     private const CARDS_VALUES = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'];
+    private const CARDS_SECOND_VALUES = ['A', 'K', 'Q', 'T', '9', '8', '7', '6', '5', '4', '3', '2', 'J'];
 
     /** @var array<int, Game> */
     private array $games = [];
+    /** @var array<int, Game> */
+    private array $gamesTwo = [];
 
     public function resolve(array $input): Solution
     {
@@ -26,29 +29,43 @@ class D07 implements ResolverInterface
             preg_match('/^([AKQJT98765432]{5}) (\d+)$/', $game, $matches);
 
             $this->games[] = new Game($matches[1], (int) $matches[2]);
+            $this->gamesTwo[] = new Game($matches[1], (int) $matches[2]);
         }
 
         $this->sortGames();
 
-        return new Solution($this->calculateTotal());
+        return new Solution(
+            $this->calculateTotal($this->games),
+            $this->calculateTotal($this->gamesTwo)
+        );
     }
 
     private function sortGames(): void
     {
-        usort($this->games, fn(Game $a, Game $b) => $this->compareGames($a, $b));
+        usort(
+            $this->games,
+            fn(Game $a, Game $b) => $this->compareGames($a, $b, self::CARDS_VALUES, false)
+        );
+        usort(
+            $this->gamesTwo,
+            fn(Game $a, Game $b) => $this->compareGames($a, $b, self::CARDS_SECOND_VALUES, true)
+        );
     }
 
-    private function compareGames(Game $a, Game $b): int
+    private function compareGames(Game $a, Game $b, array $values, bool $useJoker): int
     {
-        if ($a->getHandValue() !== $b->getHandValue()) {
-            return $a->getHandValue() <=> $b->getHandValue();
+        $aValue = $a->getHandValue($useJoker);
+        $bValue = $b->getHandValue($useJoker);
+
+        if ($aValue !== $bValue) {
+            return $aValue <=> $bValue;
         }
 
         $bCards = $b->getCards();
 
         foreach ($a->getCards() as $i => $card) {
-            $aIndex = array_search($card, self::CARDS_VALUES, true);
-            $bIndex = array_search($bCards[$i], self::CARDS_VALUES, true);
+            $aIndex = array_search($card, $values, true);
+            $bIndex = array_search($bCards[$i], $values, true);
 
             if ($aIndex < $bIndex) {
                 return 1;
@@ -62,11 +79,11 @@ class D07 implements ResolverInterface
         return 0;
     }
 
-    private function calculateTotal(): int
+    private function calculateTotal(array $games): int
     {
         $score = 0;
 
-        foreach ($this->games as $i => $game) {
+        foreach ($games as $i => $game) {
             $score += $game->getBit() * ($i + 1);
         }
 
