@@ -38,11 +38,7 @@ class D09 implements ResolverInterface
             }
 
             $totalOne += array_sum($latests);
-            $totalTwo += array_sum($firsts);
-        }
-
-        if ($totalTwo >= 20332) {
-            throw new \InvalidArgumentException('To high');
+            $totalTwo += $this->calculatePartTwo($firsts);
         }
 
         return new Solution($totalOne, $totalTwo);
@@ -53,5 +49,19 @@ class D09 implements ResolverInterface
         $count = array_count_values($numbers);
 
         return 1 !== \count($count) || 0 !== current(array_keys($count));
+    }
+
+    private function calculatePartTwo(array $numbers): int
+    {
+        $numbers[] = 0;
+        $result = 0;
+        $nbNumbers = \count($numbers);
+
+        for ($x = $nbNumbers - 1; $x > 0; $x--) {
+            $numbers[$x - 1] -= $numbers[$x];
+            $result += $numbers[$x - 1] - $numbers[$x];
+        }
+
+        return $result;
     }
 }
