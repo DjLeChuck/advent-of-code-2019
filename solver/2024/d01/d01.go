@@ -1,40 +1,34 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"math"
-	"os"
 	"regexp"
 	"slices"
 	"strconv"
+
+	"github.com/djlechuck/advent-of-code/utils"
 )
 
 func main() {
-	l, r := parseInput("inputs/2024/01.txt")
+	in := utils.ParseInput("inputs/2024/01.txt")
+	l, r := parseInput(in)
 
 	fmt.Printf("Part one: %f\n", partOne(l, r))
 	fmt.Printf("Part two: %d\n", partTwo(l, r))
 }
 
-func parseInput(in string) ([]int, []int) {
-	file, err := os.Open(in)
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
-
+func parseInput(in []string) ([]int, []int) {
 	re, err := regexp.Compile(`(\d+) +(\d+)`)
 	if err != nil {
 		panic(err)
 	}
 
 	var l, r []int
-	scan := bufio.NewScanner(file)
-	for scan.Scan() {
-		v := re.FindStringSubmatch(scan.Text())
+	for _, line := range in {
+		v := re.FindStringSubmatch(line)
 		if len(v) != 3 {
-			panic(fmt.Sprintf("cannot match two numbers in \"%s\"", l))
+			panic(fmt.Sprintf("cannot match two numbers in \"%s\"", line))
 		}
 
 		vl, err := strconv.Atoi(v[1])
@@ -47,10 +41,6 @@ func parseInput(in string) ([]int, []int) {
 		}
 		l = append(l, vl)
 		r = append(r, vr)
-	}
-
-	if err = scan.Err(); err != nil {
-		panic(err)
 	}
 
 	slices.Sort(l)
