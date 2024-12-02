@@ -12,9 +12,9 @@ var (
 	testR = []int{3, 3, 3, 4, 5, 9}
 )
 
-func TestParseInput(t *testing.T) {
+func TestProcessInput(t *testing.T) {
 	in := utils.ParseInput("../../../inputs/2024/01_example.txt")
-	l, r := parseInput(in)
+	l, r := processInput(in)
 
 	if !reflect.DeepEqual(l, testL) {
 		t.Errorf("parseInput() - l: got %v, want %v", l, testL)

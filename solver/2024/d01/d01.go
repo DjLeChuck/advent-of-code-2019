@@ -12,13 +12,13 @@ import (
 
 func main() {
 	in := utils.ParseInput("inputs/2024/01.txt")
-	l, r := parseInput(in)
+	l, r := processInput(in)
 
 	fmt.Printf("Part one: %f\n", partOne(l, r))
 	fmt.Printf("Part two: %d\n", partTwo(l, r))
 }
 
-func parseInput(in []string) ([]int, []int) {
+func processInput(in []string) ([]int, []int) {
 	re, err := regexp.Compile(`(\d+) +(\d+)`)
 	if err != nil {
 		panic(err)
