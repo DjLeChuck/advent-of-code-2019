@@ -1,2 +1,2 @@
-inputs/
-!.gitkeep
+inputs/**/*.txt
+!inputs/2024/*_example.txt
