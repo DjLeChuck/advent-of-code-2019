@@ -25,7 +25,7 @@ func main() {
 	fmt.Printf("Part one: %d - elapsed: %s\n", p1v, p1d)
 }
 
-func processInput(in []string) Grid {
+func processInput(in utils.Input) Grid {
 	m := make(Grid)
 	for x, r := range in {
 		for y, c := range r {

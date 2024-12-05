@@ -18,12 +18,8 @@ func main() {
 	fmt.Printf("Part two: %d - elapsed: %s\n", p2v, p2d)
 }
 
-func partOne(in []string) (int, string) {
-	re, err := regexp.Compile(`mul\((\d{1,3}),(\d{1,3})\)`)
-	if err != nil {
-		panic(err)
-	}
-
+func partOne(in utils.Input) (int, string) {
+	re := regexp.MustCompile(`mul\((\d{1,3}),(\d{1,3})\)`)
 	t := time.Now()
 	n := 0
 
@@ -46,12 +42,8 @@ func partOne(in []string) (int, string) {
 	return n, time.Since(t).String()
 }
 
-func partTwo(in []string) (int, string) {
-	re, err := regexp.Compile(`(do(?:n't)?\(\)|mul\((\d{1,3}),(\d{1,3})\))`)
-	if err != nil {
-		panic(err)
-	}
-
+func partTwo(in utils.Input) (int, string) {
+	re := regexp.MustCompile(`(do(?:n't)?\(\)|mul\((\d{1,3}),(\d{1,3})\))`)
 	t := time.Now()
 	n := 0
 	allowed := true

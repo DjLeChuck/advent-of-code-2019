@@ -20,7 +20,7 @@ func main() {
 	fmt.Printf("Part two: %d - elapsed: %s\n", p2v, p2d)
 }
 
-func processInput(in []string) [][]int {
+func processInput(in utils.Input) [][]int {
 	var r [][]int
 	for _, line := range in {
 		parts := strings.Fields(line)

@@ -23,7 +23,7 @@ func TestProcessInput(t *testing.T) {
 	r := processInput(in)
 
 	if !reflect.DeepEqual(r, parsedInput) {
-		t.Errorf("parseInput(): got %v, want %v", r, parsedInput)
+		t.Errorf("processInput(): got %v, want %v", r, parsedInput)
 	}
 }
 

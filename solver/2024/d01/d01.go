@@ -21,11 +21,8 @@ func main() {
 	fmt.Printf("Part two: %d - elapsed: %s\n", p2v, p2d)
 }
 
-func processInput(in []string) ([]int, []int) {
-	re, err := regexp.Compile(`(\d+) +(\d+)`)
-	if err != nil {
-		panic(err)
-	}
+func processInput(in utils.Input) ([]int, []int) {
+	re := regexp.MustCompile(`(\d+) +(\d+)`)
 
 	var l, r []int
 	for _, line := range in {

@@ -17,17 +17,17 @@ func TestProcessInput(t *testing.T) {
 	l, r := processInput(in)
 
 	if !reflect.DeepEqual(l, testL) {
-		t.Errorf("parseInput() - l: got %v, want %v", l, testL)
+		t.Errorf("processInput() - l: got %v, want %v", l, testL)
 	}
 	if !reflect.DeepEqual(r, testR) {
-		t.Errorf("parseInput() - r: got %v, want %v", r, testR)
+		t.Errorf("processInput() - r: got %v, want %v", r, testR)
 	}
 }
 
 func TestPartOne(t *testing.T) {
 	expected := 11.0
 
-	result := partOne(testL, testR)
+	result, _ := partOne(testL, testR)
 	if result != expected {
 		t.Errorf("partOne() = %f, want %f", result, expected)
 	}
@@ -36,7 +36,7 @@ func TestPartOne(t *testing.T) {
 func TestPartTwo(t *testing.T) {
 	expected := 31
 
-	result := partTwo(testL, testR)
+	result, _ := partTwo(testL, testR)
 	if result != expected {
 		t.Errorf("partTwo() = %d, want %d", result, expected)
 	}
