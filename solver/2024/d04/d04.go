@@ -176,16 +176,12 @@ func countXMas(g Grid, c Coord) int {
 	var n int
 
 	if isMas(g, dtl, 0, 0) && (isMas(g, dtr, -2, 0) || isMas(g, dbl, 0, -2)) {
-		fmt.Println("dtl", c)
 		n++
 	} else if isMas(g, dtr, 0, 0) && (isMas(g, dtl, +2, 0) || isMas(g, dbr, 0, -2)) {
-		fmt.Println("dtr", c)
 		n++
 	} else if isMas(g, dbl, 0, 0) && (isMas(g, dbr, -2, 0) || isMas(g, dtl, 0, +2)) {
-		fmt.Println("dbl", c)
 		n++
 	} else if isMas(g, dbr, 0, 0) && (isMas(g, dbl, +2, 0) || isMas(g, dtr, 0, +2)) {
-		fmt.Println("dbr", c)
 		n++
 	}
 
