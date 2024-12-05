@@ -63,5 +63,10 @@ func TestPartOne(t *testing.T) {
 }
 
 func TestPartTwo(t *testing.T) {
-	// @todo
+	expected := 123
+
+	result, _ := partTwo(parsedRules, parsedUpdates)
+	if result != expected {
+		t.Errorf("partOne() = %d, want %d", result, expected)
+	}
 }

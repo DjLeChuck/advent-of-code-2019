@@ -95,10 +95,11 @@ func partOne(r rules, u updates) (int, string) {
 	return n, time.Since(t).String()
 }
 
-func partTwo() (int, string) {
-	// @todo
+func partTwo(r rules, u updates) (int, string) {
+	t := time.Now()
+	n := 0
 
-	return 0, ""
+	return n, time.Since(t).String()
 }
 
 func grabUpdateRules(v int, u update, r rules) rules {
