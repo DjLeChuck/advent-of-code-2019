@@ -67,6 +67,6 @@ func TestPartTwo(t *testing.T) {
 
 	result, _ := partTwo(parsedRules, parsedUpdates)
 	if result != expected {
-		t.Errorf("partOne() = %d, want %d", result, expected)
+		t.Errorf("partTwo() = %d, want %d", result, expected)
 	}
 }
