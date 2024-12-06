@@ -57,8 +57,9 @@ func partOne(gr grid, gu guard) (int, string) {
 
 func partTwo(gr grid, gu guard) (int, string) {
 	t := time.Now()
-	n := 0
 	p, _ := getPath(gr, gu)
+	lp := len(p) - 1
+	r := make(chan int, lp)
 	fgp := gu.coord
 
 	for c := range p {
@@ -66,13 +67,23 @@ func partTwo(gr grid, gu guard) (int, string) {
 			continue
 		}
 
-		ngu := gu
-		ngr := newGrid(gr, c)
-		_, looping := getPath(ngr, ngu)
-		if looping {
-			n++
-		}
+		go func(gr grid, gu guard) {
+			ngu := gu
+			ngr := newGrid(gr, c)
+			_, looping := getPath(ngr, ngu)
+			if looping {
+				r <- 1
+			} else {
+				r <- 0
+			}
+		}(gr, gu)
 	}
+
+	n := 0
+	for i := 0; i < lp; i++ {
+		n += <-r
+	}
+	close(r)
 
 	return n, time.Since(t).String()
 }
