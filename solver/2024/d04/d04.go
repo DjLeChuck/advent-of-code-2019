@@ -7,10 +7,10 @@ import (
 	"github.com/djlechuck/advent-of-code/utils"
 )
 
-type Coord [2]int
-type XmasCoord [4]Coord
-type MasCoord [3]Coord
-type Grid map[Coord]string
+type coord [2]int
+type xmasCoord [4]coord
+type masCoord [3]coord
+type grid map[coord]string
 
 var (
 	xmas = [4]string{"X", "M", "A", "S"}
@@ -25,17 +25,17 @@ func main() {
 	fmt.Printf("Part one: %d - elapsed: %s\n", p1v, p1d)
 }
 
-func processInput(in utils.Input) Grid {
-	m := make(Grid)
-	for x, r := range in {
-		for y, c := range r {
-			m[Coord{x, y}] = string(c)
+func processInput(in utils.Input) grid {
+	m := make(grid)
+	for y, r := range in {
+		for x, c := range r {
+			m[coord{x, y}] = string(c)
 		}
 	}
 	return m
 }
 
-func partOne(g Grid) (int, string) {
+func partOne(g grid) (int, string) {
 	t := time.Now()
 	var n int
 
@@ -48,7 +48,7 @@ func partOne(g Grid) (int, string) {
 	return n, time.Since(t).String()
 }
 
-func partTwo(g Grid) (int, string) {
+func partTwo(g grid) (int, string) {
 	t := time.Now()
 	var n int
 
@@ -61,50 +61,50 @@ func partTwo(g Grid) (int, string) {
 	return n, time.Since(t).String()
 }
 
-func countXmas(g Grid, c Coord) int {
-	rtl := XmasCoord{
+func countXmas(g grid, c coord) int {
+	rtl := xmasCoord{
 		c,
 		{c[0] - 1, c[1]},
 		{c[0] - 2, c[1]},
 		{c[0] - 3, c[1]},
 	}
-	ltr := XmasCoord{
+	ltr := xmasCoord{
 		c,
 		{c[0], c[1] + 1},
 		{c[0], c[1] + 2},
 		{c[0], c[1] + 3},
 	}
-	utb := XmasCoord{
+	utb := xmasCoord{
 		c,
 		{c[0] + 1, c[1]},
 		{c[0] + 2, c[1]},
 		{c[0] + 3, c[1]},
 	}
-	btu := XmasCoord{
+	btu := xmasCoord{
 		c,
 		{c[0], c[1] - 1},
 		{c[0], c[1] - 2},
 		{c[0], c[1] - 3},
 	}
-	dtl := XmasCoord{
+	dtl := xmasCoord{
 		c,
 		{c[0] - 1, c[1] - 1},
 		{c[0] - 2, c[1] - 2},
 		{c[0] - 3, c[1] - 3},
 	}
-	dtr := XmasCoord{
+	dtr := xmasCoord{
 		c,
 		{c[0] + 1, c[1] - 1},
 		{c[0] + 2, c[1] - 2},
 		{c[0] + 3, c[1] - 3},
 	}
-	dbl := XmasCoord{
+	dbl := xmasCoord{
 		c,
 		{c[0] - 1, c[1] + 1},
 		{c[0] - 2, c[1] + 2},
 		{c[0] - 3, c[1] + 3},
 	}
-	dbr := XmasCoord{
+	dbr := xmasCoord{
 		c,
 		{c[0] + 1, c[1] + 1},
 		{c[0] + 2, c[1] + 2},
@@ -141,7 +141,7 @@ func countXmas(g Grid, c Coord) int {
 	return n
 }
 
-func isXmas(g Grid, c XmasCoord) bool {
+func isXmas(g grid, c xmasCoord) bool {
 	for i, coord := range c {
 		if g[coord] != xmas[i] {
 			return false
@@ -151,23 +151,23 @@ func isXmas(g Grid, c XmasCoord) bool {
 	return true
 }
 
-func countXMas(g Grid, c Coord) int {
-	dtl := MasCoord{
+func countXMas(g grid, c coord) int {
+	dtl := masCoord{
 		c,
 		{c[0] - 1, c[1] - 1},
 		{c[0] - 2, c[1] - 2},
 	}
-	dtr := MasCoord{
+	dtr := masCoord{
 		c,
 		{c[0] + 1, c[1] - 1},
 		{c[0] + 2, c[1] - 2},
 	}
-	dbl := MasCoord{
+	dbl := masCoord{
 		c,
 		{c[0] - 1, c[1] + 1},
 		{c[0] - 2, c[1] + 2},
 	}
-	dbr := MasCoord{
+	dbr := masCoord{
 		c,
 		{c[0] + 1, c[1] + 1},
 		{c[0] + 2, c[1] + 2},
@@ -188,7 +188,7 @@ func countXMas(g Grid, c Coord) int {
 	return n
 }
 
-func isMas(g Grid, c MasCoord, xDelta, yDelta int) bool {
+func isMas(g grid, c masCoord, xDelta, yDelta int) bool {
 	for i, coord := range c {
 		coord[0] += xDelta
 		coord[1] += yDelta
