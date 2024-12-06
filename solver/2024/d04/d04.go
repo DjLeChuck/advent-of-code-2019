@@ -23,6 +23,8 @@ func main() {
 
 	p1v, p1d := partOne(g)
 	fmt.Printf("Part one: %d - elapsed: %s\n", p1v, p1d)
+	p2v, p2d := partTwo(g)
+	fmt.Printf("Part two: %d - elapsed: %s\n", p2v, p2d)
 }
 
 func processInput(in utils.Input) grid {
@@ -53,8 +55,8 @@ func partTwo(g grid) (int, string) {
 	var n int
 
 	for coord, c := range g {
-		if "M" == c {
-			n += countXMas(g, coord)
+		if "A" == c {
+			n += countMas(g, coord)
 		}
 	}
 
@@ -151,52 +153,18 @@ func isXmas(g grid, c xmasCoord) bool {
 	return true
 }
 
-func countXMas(g grid, c coord) int {
-	dtl := masCoord{
-		c,
-		{c[0] - 1, c[1] - 1},
-		{c[0] - 2, c[1] - 2},
-	}
-	dtr := masCoord{
-		c,
-		{c[0] + 1, c[1] - 1},
-		{c[0] + 2, c[1] - 2},
-	}
-	dbl := masCoord{
-		c,
-		{c[0] - 1, c[1] + 1},
-		{c[0] - 2, c[1] + 2},
-	}
-	dbr := masCoord{
-		c,
-		{c[0] + 1, c[1] + 1},
-		{c[0] + 2, c[1] + 2},
-	}
+func countMas(g grid, c coord) int {
+	ul := coord{c[0] - 1, c[1] - 1}
+	ur := coord{c[0] + 1, c[1] - 1}
+	bl := coord{c[0] - 1, c[1] + 1}
+	br := coord{c[0] + 1, c[1] + 1}
 
 	var n int
 
-	if isMas(g, dtl, 0, 0) && (isMas(g, dtr, -2, 0) || isMas(g, dbl, 0, -2)) {
-		n++
-	} else if isMas(g, dtr, 0, 0) && (isMas(g, dtl, +2, 0) || isMas(g, dbr, 0, -2)) {
-		n++
-	} else if isMas(g, dbl, 0, 0) && (isMas(g, dbr, -2, 0) || isMas(g, dtl, 0, +2)) {
-		n++
-	} else if isMas(g, dbr, 0, 0) && (isMas(g, dbl, +2, 0) || isMas(g, dtr, 0, +2)) {
+	if (("M" == g[ul] && "S" == g[br]) || ("S" == g[ul] && "M" == g[br])) &&
+		(("M" == g[ur] && "S" == g[bl]) || ("S" == g[ur] && "M" == g[bl])) {
 		n++
 	}
 
 	return n
-}
-
-func isMas(g grid, c masCoord, xDelta, yDelta int) bool {
-	for i, coord := range c {
-		coord[0] += xDelta
-		coord[1] += yDelta
-
-		if g[coord] != mas[i] {
-			return false
-		}
-	}
-
-	return true
 }
