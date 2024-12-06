@@ -137,7 +137,7 @@ func TestPartOne(t *testing.T) {
 func TestPartTwo(t *testing.T) {
 	expected := 6
 
-	result, _ := partTwo()
+	result, _ := partTwo(parsedGrid, parsedGuard)
 	if result != expected {
 		t.Errorf("partTwo() = %d, want %d", result, expected)
 	}
