@@ -42,7 +42,7 @@ func TestPartOne(t *testing.T) {
 func TestPartTwo(t *testing.T) {
 	expected := 11387
 
-	result, _ := partTwo()
+	result, _ := partTwo(parsedEquations)
 	if result != expected {
 		t.Errorf("partTwo() = %d, want %d", result, expected)
 	}

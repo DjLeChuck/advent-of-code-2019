@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -19,6 +20,8 @@ func main() {
 
 	p1v, p1d := partOne(es)
 	fmt.Printf("Part one: %d - elapsed: %s\n", p1v, p1d)
+	p2v, p2d := partTwo(es)
+	fmt.Printf("Part one: %d - elapsed: %s\n", p2v, p2d)
 }
 
 func processInput(in utils.Input) []equation {
@@ -44,7 +47,7 @@ func partOne(es []equation) (int, string) {
 	r := 0
 
 	for _, e := range es {
-		if resultObtained(e) {
+		if resultObtained([]string{"+", "*"}, e) {
 			r += e.result
 		}
 	}
@@ -52,14 +55,20 @@ func partOne(es []equation) (int, string) {
 	return r, time.Since(t).String()
 }
 
-func partTwo() (int, string) {
+func partTwo(es []equation) (int, string) {
 	t := time.Now()
+	r := 0
 
-	return 0, time.Since(t).String()
+	for _, e := range es {
+		if resultObtained([]string{"+", "*", "|"}, e) {
+			r += e.result
+		}
+	}
+
+	return r, time.Since(t).String()
 }
 
-func generateCombinations(n int) [][]string {
-	signs := []string{"+", "*"}
+func generateCombinations(ops []string, n int) [][]string {
 	var r [][]string
 
 	var rf func(c []string, d int)
@@ -71,7 +80,7 @@ func generateCombinations(n int) [][]string {
 			return
 		}
 
-		for _, s := range signs {
+		for _, s := range ops {
 			rf(append(c, s), d+1)
 		}
 	}
@@ -80,17 +89,20 @@ func generateCombinations(n int) [][]string {
 	return r
 }
 
-func resultObtained(e equation) bool {
-	cb := generateCombinations(len(e.values) - 1)
+func resultObtained(ops []string, e equation) bool {
+	cb := generateCombinations(ops, len(e.values)-1)
 
 	for _, o := range cb {
 		x := e.values[0]
+
 		for i, v := range e.values[1:] {
 			switch o[i] {
 			case "+":
 				x += v
 			case "*":
 				x *= v
+			case "|":
+				x = concatInts(x, v)
 			}
 
 			if x > e.result {
@@ -103,4 +115,8 @@ func resultObtained(e equation) bool {
 	}
 
 	return false
+}
+
+func concatInts(a, b int) int {
+	return utils.CastInt(strconv.Itoa(a) + strconv.Itoa(b))
 }
