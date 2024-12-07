@@ -3,6 +3,7 @@ package utils
 import (
 	"bufio"
 	"os"
+	"strconv"
 )
 
 type Input []string
@@ -25,4 +26,12 @@ func ParseInput(input string) Input {
 	}
 
 	return results
+}
+
+func CastInt(v string) int {
+	i, err := strconv.Atoi(v)
+	if err != nil {
+		panic(err)
+	}
+	return i
 }

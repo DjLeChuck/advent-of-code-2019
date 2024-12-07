@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"regexp"
-	"strconv"
 	"time"
 
 	"github.com/djlechuck/advent-of-code/utils"
@@ -26,16 +25,7 @@ func partOne(in utils.Input) (int, string) {
 	for _, line := range in {
 		m := re.FindAllStringSubmatch(line, -1)
 		for _, v := range m {
-			vl, err := strconv.Atoi(v[1])
-			if err != nil {
-				panic(err)
-			}
-			vr, err := strconv.Atoi(v[2])
-			if err != nil {
-				panic(err)
-			}
-
-			n += vl * vr
+			n += utils.CastInt(v[1]) * utils.CastInt(v[2])
 		}
 	}
 
@@ -65,16 +55,7 @@ func partTwo(in utils.Input) (int, string) {
 				continue
 			}
 
-			vl, err := strconv.Atoi(v[2])
-			if err != nil {
-				panic(err)
-			}
-			vr, err := strconv.Atoi(v[3])
-			if err != nil {
-				panic(err)
-			}
-
-			n += vl * vr
+			n += utils.CastInt(v[2]) * utils.CastInt(v[3])
 		}
 	}
 

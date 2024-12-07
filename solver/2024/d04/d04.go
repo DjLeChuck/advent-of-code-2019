@@ -9,12 +9,10 @@ import (
 
 type coord [2]int
 type xmasCoord [4]coord
-type masCoord [3]coord
 type grid map[coord]string
 
 var (
 	xmas = [4]string{"X", "M", "A", "S"}
-	mas  = [3]string{"M", "A", "S"}
 )
 
 func main() {

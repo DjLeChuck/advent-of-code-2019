@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"math"
-	"strconv"
 	"strings"
 	"time"
 
@@ -27,11 +26,7 @@ func processInput(in utils.Input) [][]int {
 		numbers := make([]int, len(parts))
 
 		for i, part := range parts {
-			number, err := strconv.Atoi(part)
-			if err != nil {
-				panic(err)
-			}
-			numbers[i] = number
+			numbers[i] = utils.CastInt(part)
 		}
 		r = append(r, numbers)
 	}

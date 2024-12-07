@@ -5,7 +5,6 @@ import (
 	"math"
 	"regexp"
 	"slices"
-	"strconv"
 	"strings"
 	"time"
 
@@ -41,16 +40,7 @@ func processInput(in utils.Input) (rules, updates) {
 
 		if rre.MatchString(line) {
 			m := rre.FindStringSubmatch(line)
-			vl, err := strconv.Atoi(m[1])
-			if err != nil {
-				panic(err)
-			}
-			vr, err := strconv.Atoi(m[2])
-			if err != nil {
-				panic(err)
-			}
-
-			r = append(r, rule{left: vl, right: vr})
+			r = append(r, rule{left: utils.CastInt(m[1]), right: utils.CastInt(m[2])})
 
 			continue
 		}
@@ -60,11 +50,7 @@ func processInput(in utils.Input) (rules, updates) {
 		})
 		up := make(update, len(parts))
 		for i, part := range parts {
-			v, err := strconv.Atoi(part)
-			if err != nil {
-				panic(err)
-			}
-			up[i] = v
+			up[i] = utils.CastInt(part)
 		}
 		u = append(u, up)
 

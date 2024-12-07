@@ -5,7 +5,6 @@ import (
 	"math"
 	"regexp"
 	"slices"
-	"strconv"
 	"time"
 
 	"github.com/djlechuck/advent-of-code/utils"
@@ -31,16 +30,8 @@ func processInput(in utils.Input) ([]int, []int) {
 			panic(fmt.Sprintf("cannot match two numbers in \"%s\"", line))
 		}
 
-		vl, err := strconv.Atoi(v[1])
-		if err != nil {
-			panic(err)
-		}
-		vr, err := strconv.Atoi(v[2])
-		if err != nil {
-			panic(err)
-		}
-		l = append(l, vl)
-		r = append(r, vr)
+		l = append(l, utils.CastInt(v[1]))
+		r = append(r, utils.CastInt(v[2]))
 	}
 
 	slices.Sort(l)
