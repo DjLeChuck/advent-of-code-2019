@@ -22,6 +22,8 @@ func main() {
 
 	p1v, p1d := partOne(g)
 	fmt.Printf("Part one: %d - elapsed: %s\n", p1v, p1d)
+	p2v, p2d := partTwo(g)
+	fmt.Printf("Part two: %d - elapsed: %s\n", p2v, p2d)
 }
 
 func processInput(in utils.Input) grid {
@@ -49,17 +51,22 @@ func partOne(g grid) (int, string) {
 	for _, c := range g.trailheads {
 		visited := make(map[coord]bool)
 		top := make(map[coord]bool)
-		processCoords(c, &g, visited, top)
+		findTops(c, &g, visited, top)
 		n += len(top)
 	}
 
 	return n, time.Since(t).String()
 }
 
-func partTwo() (int, string) {
+func partTwo(g grid) (int, string) {
 	t := time.Now()
+	n := 0
 
-	return 0, time.Since(t).String()
+	for _, c := range g.trailheads {
+		n += countPaths(c, &g)
+	}
+
+	return n, time.Since(t).String()
 }
 
 func newGrid() grid {
@@ -68,7 +75,7 @@ func newGrid() grid {
 	}
 }
 
-func processCoords(c coord, g *grid, visited, top map[coord]bool) {
+func findTops(c coord, g *grid, visited, top map[coord]bool) {
 	if visited[c] {
 		return
 	}
@@ -79,9 +86,22 @@ func processCoords(c coord, g *grid, visited, top map[coord]bool) {
 		if nc.isTop(g) {
 			top[nc] = true
 		} else {
-			processCoords(nc, g, visited, top)
+			findTops(nc, g, visited, top)
 		}
 	}
+}
+
+func countPaths(c coord, g *grid) int {
+	n := 0
+
+	for _, nc := range c.availCoords(g) {
+		if nc.isTop(g) {
+			n++
+		} else {
+			n += countPaths(nc, g)
+		}
+	}
+	return n
 }
 
 func (c coord) availCoords(g *grid) []coord {

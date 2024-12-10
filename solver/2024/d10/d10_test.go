@@ -10,7 +10,8 @@ import (
 var (
 	parsedInput = grid{
 		points: gridPoints{
-			{0, 0}: 8, coord{0, 1}: 7,
+			{0, 0}: 8,
+			{0, 1}: 7,
 			{0, 2}: 8,
 			{0, 3}: 9,
 			{0, 4}: 4,
@@ -107,9 +108,9 @@ func TestPartOne(t *testing.T) {
 }
 
 func TestPartTwo(t *testing.T) {
-	expected := 0
+	expected := 81
 
-	result, _ := partTwo()
+	result, _ := partTwo(parsedInput)
 	if result != expected {
 		t.Errorf("partTwo() = %d, want %d", result, expected)
 	}
