@@ -9,16 +9,16 @@ import (
 	"github.com/djlechuck/advent-of-code/utils"
 )
 
-type stone int64
-type field []stone
+type field []int64
+type stoneCache map[int64]int
 
 func main() {
 	in := utils.ParseInput("inputs/2024/11.txt")
 	f := processInput(in)
 
-	p1v, p1d := partOne(f)
+	p1v, p1d := blink(f, 25)
 	fmt.Printf("Part one: %d - elapsed: %s\n", p1v, p1d)
-	p2v, p2d := partTwo(f)
+	p2v, p2d := blink(f, 75)
 	fmt.Printf("Part two: %d - elapsed: %s\n", p2v, p2d)
 }
 
@@ -29,72 +29,59 @@ func processInput(in utils.Input) field {
 		parts := strings.Fields(line)
 
 		for _, part := range parts {
-			f = append(f, stone(utils.CastInt(part)))
+			f = append(f, utils.CastInt64(part))
 		}
 	}
 
 	return f
 }
 
-func partOne(f field) (int, string) {
+func blink(f field, ni int) (int, string) {
 	t := time.Now()
 
-	for i := 0; i < 25; i++ {
-		f.blink()
+	c := make(stoneCache)
+	for _, val := range f {
+		c[val]++
 	}
 
-	return len(f), time.Since(t).String()
-}
-
-func partTwo(f field) (int, string) {
-	t := time.Now()
-
-	for i := 0; i < 75; i++ {
-		fmt.Println(i)
-		f.blink()
+	for i := 0; i < ni; i++ {
+		c = score(c)
 	}
 
-	return len(f), time.Since(t).String()
+	n := 0
+	for _, count := range c {
+		n += count
+	}
+
+	return n, time.Since(t).String()
 }
 
-func (f *field) blink() {
-	for i := 0; i < len(*f); i++ {
-		s := (*f)[i]
+func score(c stoneCache) stoneCache {
+	nc := make(stoneCache)
 
+	for s, count := range c {
 		if s == 0 {
-			(*f)[i] = 1
+			nc[1] += count
 
 			continue
 		}
 
-		if s.hasEvenDigits() {
-			*f = append((*f)[:i], append(s.split(), (*f)[i+1:]...)...)
-			i += 1
+		if len(strconv.FormatInt(s, 10))%2 == 0 {
+			left, right := splitInt(s)
+			nc[left] += count
+			nc[right] += count
 
 			continue
 		}
 
-		(*f)[i] *= 2024
+		nc[s*2024] += count
 	}
+	return nc
 }
 
-func (s *stone) hasEvenDigits() bool {
-	i := int64(*s)
-	if i == 0 {
-		return false
-	}
-	count := 0
-	for i != 0 {
-		i /= 10
-		count++
-	}
-
-	return count%2 == 0
-}
-
-func (s *stone) split() (ns []stone) {
-	v := strconv.FormatInt(int64(*s), 10)
+func splitInt(i int64) (i1, i2 int64) {
+	v := strconv.FormatInt(i, 10)
 	m := len(v) / 2
 
-	return []stone{stone(utils.CastInt(v[:m])), stone(utils.CastInt(v[m:]))}
+	return utils.CastInt64(v[:m]), utils.CastInt64(v[m:])
 }

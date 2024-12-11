@@ -20,20 +20,11 @@ func TestProcessInput(t *testing.T) {
 	}
 }
 
-func TestPartOne(t *testing.T) {
+func TestBlink(t *testing.T) {
 	expected := 55312
 
-	result, _ := partOne(parsedInput)
+	result, _ := blink(parsedInput, 25)
 	if result != expected {
-		t.Errorf("partOne() = %d, want %d", result, expected)
-	}
-}
-
-func TestPartTwo(t *testing.T) {
-	expected := 0
-
-	result, _ := partTwo(parsedInput)
-	if result != expected {
-		t.Errorf("partTwo() = %d, want %d", result, expected)
+		t.Errorf("scoring() = %d, want %d", result, expected)
 	}
 }

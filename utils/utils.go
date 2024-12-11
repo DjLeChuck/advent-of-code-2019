@@ -35,3 +35,11 @@ func CastInt(v string) int {
 	}
 	return i
 }
+
+func CastInt64(v string) int64 {
+	i, err := strconv.ParseInt(v, 10, 64)
+	if err != nil {
+		panic(err)
+	}
+	return i
+}
