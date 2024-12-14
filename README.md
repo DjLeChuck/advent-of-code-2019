@@ -6,6 +6,8 @@ I'm not trying to be the most efficient, only to solve problems and have fun.
 
 ## Edition 2024
 
+_(CPU: Intel(R) Core(TM) i5-14600KF - Min: 800; Max: 5300)_
+
 | Day | Part 1      | Part 2       |
 |-----|-------------|--------------|
 | 01  | ⭐ 573ns     | ⭐ 262.567µs  |
@@ -19,3 +21,6 @@ I'm not trying to be the most efficient, only to solve problems and have fun.
 | 09  | ⭐ 768.107ms |              |
 | 10  | ⭐ 1.909ms   | ⭐ 1.741ms    |
 | 11  | ⭐ 719.881µs | ⭐ 17.57749ms |
+| 12  |             |              |
+| 13  |             |              |
+| 14  | ⭐ 443.805µs |              |
